@@ -4,7 +4,6 @@ local TweenService = game:GetService("TweenService")
 local localPlayer = Players.LocalPlayer
 local playerGui = localPlayer:WaitForChild("PlayerGui")
 
--- Clean previous UI if exists
 if playerGui:FindFirstChild("YuanSniperUI") then
     playerGui.YuanSniperUI:Destroy()
 end
@@ -14,7 +13,6 @@ ScreenGui.Name = "YuanSniperUI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = playerGui
 
--- Main Container
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 320, 0, 410)
@@ -34,7 +32,6 @@ MainStroke.Color = Color3.fromRGB(45, 45, 50)
 MainStroke.Thickness = 1.5
 MainStroke.Parent = MainFrame
 
--- Header
 local Header = Instance.new("Frame")
 Header.Size = UDim2.new(1, 0, 0, 50)
 Header.BackgroundTransparency = 1
@@ -51,11 +48,10 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.BackgroundTransparency = 1
 Title.Parent = Header
 
--- Master Switch
 local MasterToggleBg = Instance.new("Frame")
 MasterToggleBg.Size = UDim2.new(0, 44, 0, 24)
 MasterToggleBg.Position = UDim2.new(0.82, 0, 0.28, 0)
-MasterToggleBg.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+MasterToggleBg.BackgroundColor3 = Color3.fromRGB(0, 200, 120)
 MasterToggleBg.Parent = Header
 
 local MasterCorner = Instance.new("UICorner")
@@ -64,7 +60,7 @@ MasterCorner.Parent = MasterToggleBg
 
 local MasterCircle = Instance.new("Frame")
 MasterCircle.Size = UDim2.new(0, 18, 0, 18)
-MasterCircle.Position = UDim2.new(0, 3, 0.5, -9)
+MasterCircle.Position = UDim2.new(0, 23, 0.5, -9)
 MasterCircle.BackgroundColor3 = Color3.fromRGB(200, 200, 205)
 MasterCircle.Parent = MasterToggleBg
 
@@ -78,7 +74,6 @@ MasterBtn.BackgroundTransparency = 1
 MasterBtn.Text = ""
 MasterBtn.Parent = MasterToggleBg
 
--- Divider Line
 local Line = Instance.new("Frame")
 Line.Size = UDim2.new(0.9, 0, 0, 1)
 Line.Position = UDim2.new(0.05, 0, 0.125, 0)
@@ -86,7 +81,6 @@ Line.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
 Line.BorderSizePixel = 0
 Line.Parent = MainFrame
 
--- Helper function to create rows
 local function createCard(pos, height)
     local card = Instance.new("Frame")
     card.Size = UDim2.new(0.9, 0, 0, height)
@@ -106,7 +100,6 @@ local function createCard(pos, height)
     return card
 end
 
--- Row 1: Auto Submit & Riddle Solver
 local Row1 = createCard(UDim2.new(0.05, 0, 0.15, 0), 48)
 
 local AutoSubmitLabel = Instance.new("TextLabel")
@@ -159,7 +152,6 @@ local RiddleBtnCorner = Instance.new("UICorner")
 RiddleBtnCorner.CornerRadius = UDim.new(0, 6)
 RiddleBtnCorner.Parent = RiddleBtn
 
--- Row 2: Submit after msgs (- 3 +)
 local Row2 = createCard(UDim2.new(0.05, 0, 0.29, 0), 48)
 
 local MsgLabel = Instance.new("TextLabel")
@@ -212,7 +204,6 @@ PlusBtn.TextColor3 = Color3.fromRGB(200, 200, 205)
 PlusBtn.TextSize = 14
 PlusBtn.Parent = CounterFrame
 
--- Row 3: Retype Invalid
 local Row3 = createCard(UDim2.new(0.05, 0, 0.43, 0), 48)
 
 local RetypeLabel = Instance.new("TextLabel")
@@ -240,7 +231,6 @@ local RetypeBtnCorner = Instance.new("UICorner")
 RetypeBtnCorner.CornerRadius = UDim.new(0, 6)
 RetypeBtnCorner.Parent = RetypeBtn
 
--- Console Log Box
 local ConsoleBox = Instance.new("Frame")
 ConsoleBox.Size = UDim2.new(0.9, 0, 0.38, 0)
 ConsoleBox.Position = UDim2.new(0.05, 0, 0.57, 0)
@@ -268,25 +258,22 @@ ConsoleText.TextXAlignment = Enum.TextXAlignment.Left
 ConsoleText.TextYAlignment = Enum.TextYAlignment.Top
 ConsoleText.Parent = ConsoleBox
 
--- Watermark / Discord
 local Footer = Instance.new("TextLabel")
 Footer.Size = UDim2.new(1, 0, 0, 20)
 Footer.Position = UDim2.new(0, 0, 0.95, 0)
 Footer.BackgroundTransparency = 1
 Footer.Font = Enum.Font.GothamMedium
-Footer.Text = "discord.gg/YuanSniper"
+Footer.Text = "discord.gg/MYqz4hsvc7"
 Footer.TextColor3 = Color3.fromRGB(80, 80, 90)
 Footer.TextSize = 10
 Footer.Parent = MainFrame
 
--- States
 local masterState = true
 local autoSubmitState = true
 local riddleState = false
 local retypeState = false
 local messageCount = 3
 
--- Interactive Button Logic & Tweens
 local function toggleState(btn, state)
     if state then
         btn.BackgroundColor3 = Color3.fromRGB(230, 230, 235)
@@ -304,11 +291,11 @@ MasterBtn.MouseButton1Click:Connect(function()
     if masterState then
         TweenService:Create(MasterCircle, TweenInfo.new(0.2), {Position = UDim2.new(0, 23, 0.5, -9)}):Play()
         MasterToggleBg.BackgroundColor3 = Color3.fromRGB(0, 200, 120)
-        ConsoleText.Text = ConsoleText.Text .. "\n> Yuan Sniper Enabled"
+        ConsoleText.Text = ConsoleText.Text .. "\n> Sniper Enabled"
     else
         TweenService:Create(MasterCircle, TweenInfo.new(0.2), {Position = UDim2.new(0, 3, 0.5, -9)}):Play()
         MasterToggleBg.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-        ConsoleText.Text = ConsoleText.Text .. "\n> Yuan Sniper Disabled"
+        ConsoleText.Text = ConsoleText.Text .. "\n> Sniper Disabled"
     end
 end)
 
@@ -339,7 +326,6 @@ MinusBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Code Redemption Logic
 local collectedMessages = {}
 local function processAndRedeem(code)
     ConsoleText.Text = ConsoleText.Text .. "\n> Code Sniped: " .. code
