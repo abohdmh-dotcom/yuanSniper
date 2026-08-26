@@ -1,194 +1,361 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 local localPlayer = Players.LocalPlayer
 local playerGui = localPlayer:WaitForChild("PlayerGui")
 
+-- Clean previous UI if exists
+if playerGui:FindFirstChild("YuanSniperUI") then
+    playerGui.YuanSniperUI:Destroy()
+end
+
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "YuanSniperGUI"
+ScreenGui.Name = "YuanSniperUI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = playerGui
 
+-- Main Container
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.Size = UDim2.new(0, 320, 0, 410)
+MainFrame.Position = UDim2.new(0.5, -160, 0.3, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
 MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.5, -140, 0.4, -110)
-MainFrame.Size = UDim2.new(0, 280, 0, 240)
 MainFrame.Active = true
 MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 12)
-UICorner.Parent = MainFrame
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 16)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(45, 45, 50)
+MainStroke.Thickness = 1.5
+MainStroke.Parent = MainFrame
+
+-- Header
+local Header = Instance.new("Frame")
+Header.Size = UDim2.new(1, 0, 0, 50)
+Header.BackgroundTransparency = 1
+Header.Parent = MainFrame
 
 local Title = Instance.new("TextLabel")
-Title.Parent = MainFrame
-Title.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-Title.BorderSizePixel = 0
-Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Position = UDim2.new(0.05, 0, 0, 0)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "Yuan Sniper [ULTIMATE]"
-Title.TextColor3 = Color3.fromRGB(0, 255, 180)
-Title.TextSize = 15
+Title.Text = "YUAN CODE SNIPER"
+Title.TextColor3 = Color3.fromRGB(240, 240, 245)
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.BackgroundTransparency = 1
+Title.Parent = Header
 
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
-TitleCorner.Parent = Title
+-- Master Switch
+local MasterToggleBg = Instance.new("Frame")
+MasterToggleBg.Size = UDim2.new(0, 44, 0, 24)
+MasterToggleBg.Position = UDim2.new(0.82, 0, 0.28, 0)
+MasterToggleBg.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+MasterToggleBg.Parent = Header
 
-local MsgCountLabel = Instance.new("TextLabel")
-MsgCountLabel.Parent = MainFrame
-MsgCountLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-MsgCountLabel.Position = UDim2.new(0.07, 0, 0.23, 0)
-MsgCountLabel.Size = UDim2.new(0.86, 0, 0, 35)
-MsgCountLabel.Font = Enum.Font.GothamMedium
-MsgCountLabel.Text = "Target Parts: 3"
-MsgCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-MsgCountLabel.TextSize = 14
+local MasterCorner = Instance.new("UICorner")
+MasterCorner.CornerRadius = UDim.new(1, 0)
+MasterCorner.Parent = MasterToggleBg
 
-local UICorner_2 = Instance.new("UICorner")
-UICorner_2.CornerRadius = UDim.new(0, 8)
-UICorner_2.Parent = MsgCountLabel
+local MasterCircle = Instance.new("Frame")
+MasterCircle.Size = UDim2.new(0, 18, 0, 18)
+MasterCircle.Position = UDim2.new(0, 3, 0.5, -9)
+MasterCircle.BackgroundColor3 = Color3.fromRGB(200, 200, 205)
+MasterCircle.Parent = MasterToggleBg
 
-local PlusBtn = Instance.new("TextButton")
-PlusBtn.Parent = MainFrame
-PlusBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
-PlusBtn.Position = UDim2.new(0.53, 0, 0.42, 0)
-PlusBtn.Size = UDim2.new(0.4, 0, 0, 35)
-PlusBtn.Font = Enum.Font.GothamBold
-PlusBtn.Text = "+ Add"
-PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-PlusBtn.TextSize = 14
+local MasterCircleCorner = Instance.new("UICorner")
+MasterCircleCorner.CornerRadius = UDim.new(1, 0)
+MasterCircleCorner.Parent = MasterCircle
 
-local UICorner_3 = Instance.new("UICorner")
-UICorner_3.CornerRadius = UDim.new(0, 8)
-UICorner_3.Parent = PlusBtn
+local MasterBtn = Instance.new("TextButton")
+MasterBtn.Size = UDim2.new(1, 0, 1, 0)
+MasterBtn.BackgroundTransparency = 1
+MasterBtn.Text = ""
+MasterBtn.Parent = MasterToggleBg
+
+-- Divider Line
+local Line = Instance.new("Frame")
+Line.Size = UDim2.new(0.9, 0, 0, 1)
+Line.Position = UDim2.new(0.05, 0, 0.125, 0)
+Line.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+Line.BorderSizePixel = 0
+Line.Parent = MainFrame
+
+-- Helper function to create rows
+local function createCard(pos, height)
+    local card = Instance.new("Frame")
+    card.Size = UDim2.new(0.9, 0, 0, height)
+    card.Position = pos
+    card.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+    card.Parent = MainFrame
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = card
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(35, 35, 40)
+    stroke.Thickness = 1
+    stroke.Parent = card
+    
+    return card
+end
+
+-- Row 1: Auto Submit & Riddle Solver
+local Row1 = createCard(UDim2.new(0.05, 0, 0.15, 0), 48)
+
+local AutoSubmitLabel = Instance.new("TextLabel")
+AutoSubmitLabel.Text = "Auto submit"
+AutoSubmitLabel.Font = Enum.Font.GothamMedium
+AutoSubmitLabel.TextColor3 = Color3.fromRGB(200, 200, 205)
+AutoSubmitLabel.TextSize = 12
+AutoSubmitLabel.Size = UDim2.new(0.32, 0, 1, 0)
+AutoSubmitLabel.Position = UDim2.new(0.04, 0, 0, 0)
+AutoSubmitLabel.BackgroundTransparency = 1
+AutoSubmitLabel.TextXAlignment = Enum.TextXAlignment.Left
+AutoSubmitLabel.Parent = Row1
+
+local AutoSubmitBtn = Instance.new("TextButton")
+AutoSubmitBtn.Size = UDim2.new(0, 42, 0, 22)
+AutoSubmitBtn.Position = UDim2.new(0.34, 0, 0.27, 0)
+AutoSubmitBtn.BackgroundColor3 = Color3.fromRGB(230, 230, 235)
+AutoSubmitBtn.Font = Enum.Font.GothamBold
+AutoSubmitBtn.Text = "ON"
+AutoSubmitBtn.TextColor3 = Color3.fromRGB(15, 15, 15)
+AutoSubmitBtn.TextSize = 10
+AutoSubmitBtn.Parent = Row1
+
+local ASBtnCorner = Instance.new("UICorner")
+ASBtnCorner.CornerRadius = UDim.new(0, 6)
+ASBtnCorner.Parent = AutoSubmitBtn
+
+local RiddleLabel = Instance.new("TextLabel")
+RiddleLabel.Text = "Riddle solver"
+RiddleLabel.Font = Enum.Font.GothamMedium
+RiddleLabel.TextColor3 = Color3.fromRGB(130, 130, 135)
+RiddleLabel.TextSize = 11
+RiddleLabel.Size = UDim2.new(0.3, 0, 1, 0)
+RiddleLabel.Position = UDim2.new(0.53, 0, 0, 0)
+RiddleLabel.BackgroundTransparency = 1
+RiddleLabel.TextXAlignment = Enum.TextXAlignment.Left
+RiddleLabel.Parent = Row1
+
+local RiddleBtn = Instance.new("TextButton")
+RiddleBtn.Size = UDim2.new(0, 42, 0, 22)
+RiddleBtn.Position = UDim2.new(0.83, 0, 0.27, 0)
+RiddleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+RiddleBtn.Font = Enum.Font.GothamBold
+RiddleBtn.Text = "OFF"
+RiddleBtn.TextColor3 = Color3.fromRGB(100, 100, 105)
+RiddleBtn.TextSize = 10
+RiddleBtn.Parent = Row1
+
+local RiddleBtnCorner = Instance.new("UICorner")
+RiddleBtnCorner.CornerRadius = UDim.new(0, 6)
+RiddleBtnCorner.Parent = RiddleBtn
+
+-- Row 2: Submit after msgs (- 3 +)
+local Row2 = createCard(UDim2.new(0.05, 0, 0.29, 0), 48)
+
+local MsgLabel = Instance.new("TextLabel")
+MsgLabel.Text = "Submit after msgs"
+MsgLabel.Font = Enum.Font.GothamMedium
+MsgLabel.TextColor3 = Color3.fromRGB(200, 200, 205)
+MsgLabel.TextSize = 12
+MsgLabel.Size = UDim2.new(0.5, 0, 1, 0)
+MsgLabel.Position = UDim2.new(0.04, 0, 0, 0)
+MsgLabel.BackgroundTransparency = 1
+MsgLabel.TextXAlignment = Enum.TextXAlignment.Left
+MsgLabel.Parent = Row2
+
+local CounterFrame = Instance.new("Frame")
+CounterFrame.Size = UDim2.new(0, 95, 0, 28)
+CounterFrame.Position = UDim2.new(0.64, 0, 0.2, 0)
+CounterFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 32)
+CounterFrame.Parent = Row2
+
+local CounterCorner = Instance.new("UICorner")
+CounterCorner.CornerRadius = UDim.new(0, 6)
+CounterCorner.Parent = CounterFrame
 
 local MinusBtn = Instance.new("TextButton")
-MinusBtn.Parent = MainFrame
-MinusBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-MinusBtn.Position = UDim2.new(0.07, 0, 0.42, 0)
-MinusBtn.Size = UDim2.new(0.4, 0, 0, 35)
+MinusBtn.Size = UDim2.new(0, 28, 1, 0)
+MinusBtn.BackgroundTransparency = 1
 MinusBtn.Font = Enum.Font.GothamBold
-MinusBtn.Text = "- Sub"
-MinusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinusBtn.Text = "-"
+MinusBtn.TextColor3 = Color3.fromRGB(200, 200, 205)
 MinusBtn.TextSize = 14
+MinusBtn.Parent = CounterFrame
 
-local UICorner_4 = Instance.new("UICorner")
-UICorner_4.CornerRadius = UDim.new(0, 8)
-UICorner_4.Parent = MinusBtn
+local CountDisplay = Instance.new("TextLabel")
+CountDisplay.Size = UDim2.new(0, 39, 1, 0)
+CountDisplay.Position = UDim2.new(0, 28, 0, 0)
+CountDisplay.BackgroundTransparency = 1
+CountDisplay.Font = Enum.Font.GothamBold
+CountDisplay.Text = "3"
+CountDisplay.TextColor3 = Color3.fromRGB(240, 240, 245)
+CountDisplay.TextSize = 13
+CountDisplay.Parent = CounterFrame
 
-local AutoRedeemToggle = Instance.new("TextButton")
-AutoRedeemToggle.Parent = MainFrame
-AutoRedeemToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-AutoRedeemToggle.Position = UDim2.new(0.07, 0, 0.61, 0)
-AutoRedeemToggle.Size = UDim2.new(0.86, 0, 0, 35)
-AutoRedeemToggle.Font = Enum.Font.GothamBold
-AutoRedeemToggle.Text = "Auto Redeem: OFF"
-AutoRedeemToggle.TextColor3 = Color3.fromRGB(255, 90, 90)
-AutoRedeemToggle.TextSize = 13
+local PlusBtn = Instance.new("TextButton")
+PlusBtn.Size = UDim2.new(0, 28, 1, 0)
+PlusBtn.Position = UDim2.new(0, 67, 0, 0)
+PlusBtn.BackgroundTransparency = 1
+PlusBtn.Font = Enum.Font.GothamBold
+PlusBtn.Text = "+"
+PlusBtn.TextColor3 = Color3.fromRGB(200, 200, 205)
+PlusBtn.TextSize = 14
+PlusBtn.Parent = CounterFrame
 
-local UICorner_5 = Instance.new("UICorner")
-UICorner_5.CornerRadius = UDim.new(0, 8)
-UICorner_5.Parent = AutoRedeemToggle
+-- Row 3: Retype Invalid
+local Row3 = createCard(UDim2.new(0.05, 0, 0.43, 0), 48)
 
-local RetypeToggle = Instance.new("TextButton")
-RetypeToggle.Parent = MainFrame
-RetypeToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-RetypeToggle.Position = UDim2.new(0.07, 0, 0.80, 0)
-RetypeToggle.Size = UDim2.new(0.86, 0, 0, 35)
-RetypeToggle.Font = Enum.Font.GothamBold
-RetypeToggle.Text = "Retype Invalid: OFF"
-RetypeToggle.TextColor3 = Color3.fromRGB(255, 90, 90)
-RetypeToggle.TextSize = 13
+local RetypeLabel = Instance.new("TextLabel")
+RetypeLabel.Text = "Retype invalid"
+RetypeLabel.Font = Enum.Font.GothamMedium
+RetypeLabel.TextColor3 = Color3.fromRGB(200, 200, 205)
+RetypeLabel.TextSize = 12
+RetypeLabel.Size = UDim2.new(0.5, 0, 1, 0)
+RetypeLabel.Position = UDim2.new(0.04, 0, 0, 0)
+RetypeLabel.BackgroundTransparency = 1
+RetypeLabel.TextXAlignment = Enum.TextXAlignment.Left
+RetypeLabel.Parent = Row3
 
-local UICorner_6 = Instance.new("UICorner")
-UICorner_6.CornerRadius = UDim.new(0, 8)
-UICorner_6.Parent = RetypeToggle
+local RetypeBtn = Instance.new("TextButton")
+RetypeBtn.Size = UDim2.new(0, 42, 0, 22)
+RetypeBtn.Position = UDim2.new(0.83, 0, 0.27, 0)
+RetypeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+RetypeBtn.Font = Enum.Font.GothamBold
+RetypeBtn.Text = "OFF"
+RetypeBtn.TextColor3 = Color3.fromRGB(100, 100, 105)
+RetypeBtn.TextSize = 10
+RetypeBtn.Parent = Row3
 
-local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Parent = MainFrame
-StatusLabel.BackgroundColor3 = Color3.Transparent
-StatusLabel.Position = UDim2.new(0.07, 0, 0.94, 0)
-StatusLabel.Size = UDim2.new(0.86, 0, 0, 15)
-StatusLabel.Font = Enum.Font.Gotham
-StatusLabel.Text = "Status: Ready for Yuan"
-StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-StatusLabel.TextSize = 10
+local RetypeBtnCorner = Instance.new("UICorner")
+RetypeBtnCorner.CornerRadius = UDim.new(0, 6)
+RetypeBtnCorner.Parent = RetypeBtn
 
+-- Console Log Box
+local ConsoleBox = Instance.new("Frame")
+ConsoleBox.Size = UDim2.new(0.9, 0, 0.38, 0)
+ConsoleBox.Position = UDim2.new(0.05, 0, 0.57, 0)
+ConsoleBox.BackgroundColor3 = Color3.fromRGB(8, 8, 10)
+ConsoleBox.Parent = MainFrame
+
+local ConsoleCorner = Instance.new("UICorner")
+ConsoleCorner.CornerRadius = UDim.new(0, 10)
+ConsoleCorner.Parent = ConsoleBox
+
+local ConsoleStroke = Instance.new("UIStroke")
+ConsoleStroke.Color = Color3.fromRGB(35, 35, 40)
+ConsoleStroke.Thickness = 1
+ConsoleStroke.Parent = ConsoleBox
+
+local ConsoleText = Instance.new("TextLabel")
+ConsoleText.Size = UDim2.new(0.92, 0, 0.9, 0)
+ConsoleText.Position = UDim2.new(0.04, 0, 0.05, 0)
+ConsoleText.BackgroundTransparency = 1
+ConsoleText.Font = Enum.Font.Code
+ConsoleText.Text = "> scanning for codes...\n> Status: Loaded successfully"
+ConsoleText.TextColor3 = Color3.fromRGB(120, 120, 130)
+ConsoleText.TextSize = 11
+ConsoleText.TextXAlignment = Enum.TextXAlignment.Left
+ConsoleText.TextYAlignment = Enum.TextYAlignment.Top
+ConsoleText.Parent = ConsoleBox
+
+-- Watermark / Discord
+local Footer = Instance.new("TextLabel")
+Footer.Size = UDim2.new(1, 0, 0, 20)
+Footer.Position = UDim2.new(0, 0, 0.95, 0)
+Footer.BackgroundTransparency = 1
+Footer.Font = Enum.Font.GothamMedium
+Footer.Text = "discord.gg/YuanSniper"
+Footer.TextColor3 = Color3.fromRGB(80, 80, 90)
+Footer.TextSize = 10
+Footer.Parent = MainFrame
+
+-- States
+local masterState = true
+local autoSubmitState = true
+local riddleState = false
+local retypeState = false
 local messageCount = 3
-local autoRedeemState = false
-local retypeInvalidState = false
+
+-- Interactive Button Logic & Tweens
+local function toggleState(btn, state)
+    if state then
+        btn.BackgroundColor3 = Color3.fromRGB(230, 230, 235)
+        btn.TextColor3 = Color3.fromRGB(15, 15, 15)
+        btn.Text = "ON"
+    else
+        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+        btn.TextColor3 = Color3.fromRGB(100, 100, 105)
+        btn.Text = "OFF"
+    end
+end
+
+MasterBtn.MouseButton1Click:Connect(function()
+    masterState = not masterState
+    if masterState then
+        TweenService:Create(MasterCircle, TweenInfo.new(0.2), {Position = UDim2.new(0, 23, 0.5, -9)}):Play()
+        MasterToggleBg.BackgroundColor3 = Color3.fromRGB(0, 200, 120)
+        ConsoleText.Text = ConsoleText.Text .. "\n> Yuan Sniper Enabled"
+    else
+        TweenService:Create(MasterCircle, TweenInfo.new(0.2), {Position = UDim2.new(0, 3, 0.5, -9)}):Play()
+        MasterToggleBg.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+        ConsoleText.Text = ConsoleText.Text .. "\n> Yuan Sniper Disabled"
+    end
+end)
+
+AutoSubmitBtn.MouseButton1Click:Connect(function()
+    autoSubmitState = not autoSubmitState
+    toggleState(AutoSubmitBtn, autoSubmitState)
+end)
+
+RiddleBtn.MouseButton1Click:Connect(function()
+    riddleState = not riddleState
+    toggleState(RiddleBtn, riddleState)
+end)
+
+RetypeBtn.MouseButton1Click:Connect(function()
+    retypeState = not retypeState
+    toggleState(RetypeBtn, retypeState)
+end)
 
 PlusBtn.MouseButton1Click:Connect(function()
     messageCount = messageCount + 1
-    MsgCountLabel.Text = "Target Parts: " .. messageCount
+    CountDisplay.Text = tostring(messageCount)
 end)
 
 MinusBtn.MouseButton1Click:Connect(function()
     if messageCount > 1 then
         messageCount = messageCount - 1
-        MsgCountLabel.Text = "Target Parts: " .. messageCount
+        CountDisplay.Text = tostring(messageCount)
     end
 end)
 
-AutoRedeemToggle.MouseButton1Click:Connect(function()
-    autoRedeemState = not autoRedeemState
-    if autoRedeemState then
-        AutoRedeemToggle.Text = "Auto Redeem: ON"
-        AutoRedeemToggle.TextColor3 = Color3.fromRGB(0, 255, 120)
-        AutoRedeemToggle.BackgroundColor3 = Color3.fromRGB(20, 50, 35)
-    else
-        AutoRedeemToggle.Text = "Auto Redeem: OFF"
-        AutoRedeemToggle.TextColor3 = Color3.fromRGB(255, 90, 90)
-        AutoRedeemToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-    end
-end)
-
-RetypeToggle.MouseButton1Click:Connect(function()
-    retypeInvalidState = not retypeInvalidState
-    if retypeInvalidState then
-        RetypeToggle.Text = "Retype Invalid: ON"
-        RetypeToggle.TextColor3 = Color3.fromRGB(0, 255, 120)
-        RetypeToggle.BackgroundColor3 = Color3.fromRGB(20, 50, 35)
-    else
-        RetypeToggle.Text = "Retype Invalid: OFF"
-        RetypeToggle.TextColor3 = Color3.fromRGB(255, 90, 90)
-        RetypeToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-    end
-end)
-
+-- Code Redemption Logic
 local collectedMessages = {}
 local function processAndRedeem(code)
-    StatusLabel.Text = "Status: Sniping..."
+    ConsoleText.Text = ConsoleText.Text .. "\n> Code Sniped: " .. code
     task.spawn(function()
-        local success, err = pcall(function()
+        pcall(function()
             local remotes = ReplicatedStorage:FindFirstChild("RemoteEvent", true) or ReplicatedStorage:FindFirstChild("Remotes", true)
             if remotes then
                 remotes:FireServer(code)
             end
         end)
-        
-        if success then
-            StatusLabel.Text = "Status: Redeemed Successfully!"
-        else
-            if retypeInvalidState then
-                StatusLabel.Text = "Status: Retyping Invalid..."
-                task.wait(0.1)
-                pcall(function()
-                    local remotes = ReplicatedStorage:FindFirstChild("RemoteEvent", true)
-                    if remotes then remotes:FireServer(code) end
-                end)
-            else
-                StatusLabel.Text = "Status: Failed / Invalid"
-            end
-        end
     end)
 end
 
 local function listenToChat(player)
     player.Chatted:Connect(function(msg)
-        if autoRedeemState then
+        if masterState and autoSubmitState then
             table.insert(collectedMessages, msg)
             if #collectedMessages >= messageCount then
                 local finalCode = table.concat(collectedMessages, "")
