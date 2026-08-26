@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local TextChatService = game:GetService("TextChatService")
 local localPlayer = Players.LocalPlayer
 local playerGui = localPlayer:WaitForChild("PlayerGui")
 
@@ -13,7 +14,6 @@ ScreenGui.Name = "YuanSniperUI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = playerGui
 
--- صغرنا العرض والطول عشان تصير متناسقة ومضغوطة
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 270, 0, 350)
@@ -101,7 +101,6 @@ local function createCard(pos, height)
     return card
 end
 
--- Row 1: Auto submit & Riddle solver
 local Row1 = createCard(UDim2.new(0.05, 0, 0.14, 0), 42)
 
 local AutoSubmitLabel = Instance.new("TextLabel")
@@ -154,7 +153,6 @@ local RiddleBtnCorner = Instance.new("UICorner")
 RiddleBtnCorner.CornerRadius = UDim.new(0, 5)
 RiddleBtnCorner.Parent = RiddleBtn
 
--- Row 2: Submit after msgs
 local Row2 = createCard(UDim2.new(0.05, 0, 0.27, 0), 42)
 
 local MsgLabel = Instance.new("TextLabel")
@@ -207,7 +205,6 @@ PlusBtn.TextColor3 = Color3.fromRGB(200, 200, 205)
 PlusBtn.TextSize = 12
 PlusBtn.Parent = CounterFrame
 
--- Row 3: Retype invalid
 local Row3 = createCard(UDim2.new(0.05, 0, 0.4, 0), 42)
 
 local RetypeLabel = Instance.new("TextLabel")
@@ -235,7 +232,6 @@ local RetypeBtnCorner = Instance.new("UICorner")
 RetypeBtnCorner.CornerRadius = UDim.new(0, 5)
 RetypeBtnCorner.Parent = RetypeBtn
 
--- Console Log Box
 local ConsoleBox = Instance.new("Frame")
 ConsoleBox.Size = UDim2.new(0.9, 0, 0.36, 0)
 ConsoleBox.Position = UDim2.new(0.05, 0, 0.54, 0)
@@ -273,7 +269,6 @@ Footer.TextColor3 = Color3.fromRGB(80, 80, 90)
 Footer.TextSize = 9
 Footer.Parent = MainFrame
 
--- States
 local masterState = true
 local autoSubmitState = true
 local riddleState = false
@@ -308,19 +303,16 @@ end)
 AutoSubmitBtn.MouseButton1Click:Connect(function()
     autoSubmitState = not autoSubmitState
     toggleState(AutoSubmitBtn, autoSubmitState)
-    ConsoleText.Text = ConsoleText.Text .. "\n> Auto Submit: " .. tostring(autoSubmitState)
 end)
 
 RiddleBtn.MouseButton1Click:Connect(function()
     riddleState = not riddleState
     toggleState(RiddleBtn, riddleState)
-    ConsoleText.Text = ConsoleText.Text .. "\n> Riddle Solver: " .. tostring(riddleState)
 end)
 
 RetypeBtn.MouseButton1Click:Connect(function()
     retypeState = not retypeState
     toggleState(RetypeBtn, retypeState)
-    ConsoleText.Text = ConsoleText.Text .. "\n> Retype Invalid: " .. tostring(retypeState)
 end)
 
 PlusBtn.MouseButton1Click:Connect(function()
@@ -335,33 +327,30 @@ MinusBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Code Redemption Logic with 0.1 Delay & Active Console logs
+-- Active Code Trigger & Auto Execution Logic with 0.1 Delay
 local collectedMessages = {}
 local function processAndRedeem(code)
     ConsoleText.Text = ConsoleText.Text .. "\n> Sniping: " .. code
     task.spawn(function()
-        local success, err = pcall(function()
+        task.wait(0.1) -- ديلاي 0.1 صاروخ
+        pcall(function()
+            -- إرسال الكود للريموت الأساسي باللعبة
             local remotes = ReplicatedStorage:FindFirstChild("RemoteEvent", true) or ReplicatedStorage:FindFirstChild("Remotes", true)
             if remotes then
                 remotes:FireServer(code)
             end
-        end)
-        
-        task.wait(0.1) -- ديلاي 0.1 سريع جداً ومضبوط
-        
-        if success then
-            ConsoleText.Text = ConsoleText.Text .. "\n> Success!"
-        else
-            if retypeState then
-                ConsoleText.Text = ConsoleText.Text .. "\n> Retyping..."
-                pcall(function()
-                    local remotes = ReplicatedStorage:FindFirstChild("RemoteEvent", true)
-                    if remotes then remotes:FireServer(code) end
-                end)
+            
+            -- كتابة الكود عبر نظام الشات الحديث لو متوفر
+            if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+                local channel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+                if channel then
+                    channel:SendAsync(code)
+                end
             else
-                ConsoleText.Text = ConsoleText.Text .. "\n> Failed / Invalid"
+                game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer(code, "All")
             end
-        end
+        end)
+        ConsoleText.Text = ConsoleText.Text .. "\n> Sent: " .. code
     end)
 end
 
@@ -369,7 +358,7 @@ local function listenToChat(player)
     player.Chatted:Connect(function(msg)
         if masterState and autoSubmitState then
             table.insert(collectedMessages, msg)
-            ConsoleText.Text = ConsoleText.Text .. "\n> Msg: " .. msg
+            ConsoleText.Text = ConsoleText.Text .. "\n> [" .. player.Name .. "]: " .. msg
             if #collectedMessages >= messageCount then
                 local finalCode = table.concat(collectedMessages, "")
                 processAndRedeem(finalCode)
