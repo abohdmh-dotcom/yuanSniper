@@ -1,28 +1,14 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local localPlayer = Players.LocalPlayer
+local playerGui = localPlayer:WaitForChild("PlayerGui")
 
 local ScreenGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local Title = Instance.new("TextLabel")
-
-local MsgCountLabel = Instance.new("TextLabel")
-local UICorner_2 = Instance.new("UICorner")
-local PlusBtn = Instance.new("TextButton")
-local UICorner_3 = Instance.new("UICorner")
-local MinusBtn = Instance.new("TextButton")
-local UICorner_4 = Instance.new("UICorner")
-
-local AutoRedeemToggle = Instance.new("TextButton")
-local UICorner_5 = Instance.new("UICorner")
-local RetypeToggle = Instance.new("TextButton")
-local UICorner_6 = Instance.new("UICorner")
-local StatusLabel = Instance.new("TextLabel")
-
 ScreenGui.Name = "YuanSniperGUI"
-ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = playerGui
 
+local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
@@ -32,9 +18,11 @@ MainFrame.Size = UDim2.new(0, 280, 0, 240)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
+local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = MainFrame
 
+local Title = Instance.new("TextLabel")
 Title.Parent = MainFrame
 Title.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 Title.BorderSizePixel = 0
@@ -48,6 +36,7 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = Title
 
+local MsgCountLabel = Instance.new("TextLabel")
 MsgCountLabel.Parent = MainFrame
 MsgCountLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 MsgCountLabel.Position = UDim2.new(0.07, 0, 0.23, 0)
@@ -55,12 +44,13 @@ MsgCountLabel.Size = UDim2.new(0.86, 0, 0, 35)
 MsgCountLabel.Font = Enum.Font.GothamMedium
 MsgCountLabel.Text = "Target Parts: 3"
 MsgCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-MsgCountLabel.TextSize:eq = 14
 MsgCountLabel.TextSize = 14
 
+local UICorner_2 = Instance.new("UICorner")
 UICorner_2.CornerRadius = UDim.new(0, 8)
 UICorner_2.Parent = MsgCountLabel
 
+local PlusBtn = Instance.new("TextButton")
 PlusBtn.Parent = MainFrame
 PlusBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
 PlusBtn.Position = UDim2.new(0.53, 0, 0.42, 0)
@@ -70,9 +60,11 @@ PlusBtn.Text = "+ Add"
 PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlusBtn.TextSize = 14
 
+local UICorner_3 = Instance.new("UICorner")
 UICorner_3.CornerRadius = UDim.new(0, 8)
 UICorner_3.Parent = PlusBtn
 
+local MinusBtn = Instance.new("TextButton")
 MinusBtn.Parent = MainFrame
 MinusBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
 MinusBtn.Position = UDim2.new(0.07, 0, 0.42, 0)
@@ -82,9 +74,11 @@ MinusBtn.Text = "- Sub"
 MinusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinusBtn.TextSize = 14
 
+local UICorner_4 = Instance.new("UICorner")
 UICorner_4.CornerRadius = UDim.new(0, 8)
 UICorner_4.Parent = MinusBtn
 
+local AutoRedeemToggle = Instance.new("TextButton")
 AutoRedeemToggle.Parent = MainFrame
 AutoRedeemToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 AutoRedeemToggle.Position = UDim2.new(0.07, 0, 0.61, 0)
@@ -94,9 +88,11 @@ AutoRedeemToggle.Text = "Auto Redeem: OFF"
 AutoRedeemToggle.TextColor3 = Color3.fromRGB(255, 90, 90)
 AutoRedeemToggle.TextSize = 13
 
+local UICorner_5 = Instance.new("UICorner")
 UICorner_5.CornerRadius = UDim.new(0, 8)
 UICorner_5.Parent = AutoRedeemToggle
 
+local RetypeToggle = Instance.new("TextButton")
 RetypeToggle.Parent = MainFrame
 RetypeToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 RetypeToggle.Position = UDim2.new(0.07, 0, 0.80, 0)
@@ -106,9 +102,11 @@ RetypeToggle.Text = "Retype Invalid: OFF"
 RetypeToggle.TextColor3 = Color3.fromRGB(255, 90, 90)
 RetypeToggle.TextSize = 13
 
+local UICorner_6 = Instance.new("UICorner")
 UICorner_6.CornerRadius = UDim.new(0, 8)
 UICorner_6.Parent = RetypeToggle
 
+local StatusLabel = Instance.new("TextLabel")
 StatusLabel.Parent = MainFrame
 StatusLabel.BackgroundColor3 = Color3.Transparent
 StatusLabel.Position = UDim2.new(0.07, 0, 0.94, 0)
