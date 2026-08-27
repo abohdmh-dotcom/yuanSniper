@@ -208,7 +208,7 @@ PlusBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
 PlusBtn.TextSize = 12
 PlusBtn.Parent = CounterFrame
 
--- Row 3: Retype invalid
+-- Row 3: Retype invalid (Double Send Mode)
 local Row3 = createCard(UDim2.new(0.05, 0, 0.4, 0), 42)
 
 local RetypeLabel = Instance.new("TextLabel")
@@ -225,10 +225,10 @@ RetypeLabel.Parent = Row3
 local RetypeBtn = Instance.new("TextButton")
 RetypeBtn.Size = UDim2.new(0, 36, 0, 20)
 RetypeBtn.Position = UDim2.new(0.83, 0, 0.25, 0)
-RetypeBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+RetypeBtn.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
 RetypeBtn.Font = Enum.Font.GothamBold
-RetypeBtn.Text = "OFF"
-RetypeBtn.TextColor3 = Color3.fromRGB(140, 140, 140)
+RetypeBtn.Text = "ON"
+RetypeBtn.TextColor3 = Color3.fromRGB(10, 10, 10)
 RetypeBtn.TextSize = 9
 RetypeBtn.Parent = Row3
 
@@ -257,7 +257,7 @@ ConsoleText.Size = UDim2.new(0.92, 0, 0.9, 0)
 ConsoleText.Position = UDim2.new(0.04, 0, 0.05, 0)
 ConsoleText.BackgroundTransparency = 1
 ConsoleText.Font = Enum.Font.Code
-ConsoleText.Text = "> scanning all chat messages...\n> Status: Ready"
+ConsoleText.Text = "> scanning all chat messages...\n> Status: Ace Mode Active (0.1s)"
 ConsoleText.TextColor3 = Color3.fromRGB(160, 160, 160)
 ConsoleText.TextSize = 10
 ConsoleText.TextXAlignment = Enum.TextXAlignment.Left
@@ -278,7 +278,7 @@ Footer.Parent = MainFrame
 local masterState = true
 local autoSubmitState = true
 local riddleState = false
-local retypeState = false
+local retypeState = true -- شغال افتراضياً على نمط آيس (إرسال مرتين)
 local messageCount = 3
 
 local function toggleState(btn, state)
@@ -335,32 +335,44 @@ MinusBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Ultra Fast Execution Logic (0.1 Delay)
+-- Ace Ultra Fast Execution Logic (0.1 Delay + Double Send)
 local collectedMessages = {}
-local function processAndRedeem(code)
-    ConsoleText.Text = ConsoleText.Text .. "\n> Sniping: " .. code
-    task.spawn(function()
-        task.wait(0.1) -- ديلاي صاروخي 0.1
-        pcall(function()
-            local remotes = ReplicatedStorage:FindFirstChild("RemoteEvent", true) or ReplicatedStorage:FindFirstChild("Remotes", true)
-            if remotes then
-                remotes:FireServer(code)
+local function sendCodeAction(code)
+    pcall(function()
+        local remotes = ReplicatedStorage:FindFirstChild("RemoteEvent", true) or ReplicatedStorage:FindFirstChild("Remotes", true)
+        if remotes then
+            remotes:FireServer(code)
+        end
+        
+        if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            local channel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+            if channel then
+                channel:SendAsync(code)
             end
-            
-            if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-                local channel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
-                if channel then
-                    channel:SendAsync(code)
-                end
-            else
-                game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer(code, "All")
-            end
-        end)
-        ConsoleText.Text = ConsoleText.Text .. "\n> Sent: " .. code
+        else
+            game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer(code, "All")
+        end
     end)
 end
 
--- الاستماع لأي رسالة من أي لاعب باللعبة فوراً
+local function processAndRedeem(code)
+    ConsoleText.Text = ConsoleText.Text .. "\n> Sniping: " .. code
+    task.spawn(function()
+        -- الإرسال الأول الصاروخي
+        task.wait(0.1)
+        sendCodeAction(code)
+        ConsoleText.Text = ConsoleText.Text .. "\n> Sent (1): " .. code
+        
+        -- لو ميزة Retype (الإرسال المزدوج) شغلة، يرسلها مرة ثانية فوري بـ 0.1
+        if retypeState then
+            task.wait(0.1)
+            sendCodeAction(code)
+            ConsoleText.Text = ConsoleText.Text .. "\n> Retried (2): " .. code
+        end
+    end)
+end
+
+-- مراقبة كل رسائل اللاعبين في السيرفر
 local function listenToChat(player)
     player.Chatted:Connect(function(msg)
         if masterState and autoSubmitState then
